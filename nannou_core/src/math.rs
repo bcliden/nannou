@@ -54,15 +54,57 @@ pub trait Mat4LookTo {
 }
 
 impl ConvertAngle for f32 {
+    /// # Examples
+    /// ```
+    /// # use nannou_core::prelude::*;
+    /// # use nannou_core::math::ConvertAngle;
+    /// assert_eq!(90_f32.deg_to_rad(), core::f32::consts::PI / 2.0);
+    /// assert_eq!(-90_f32.deg_to_rad(), -core::f32::consts::PI / 2.0);
+    /// assert_eq!(180_f32.deg_to_rad(), core::f32::consts::PI);
+    /// assert_eq!(-180_f32.deg_to_rad(), -core::f32::consts::PI);
+    /// assert_eq!(360_f32.deg_to_rad(), 2.0 * core::f32::consts::PI);
+    /// ```
     fn deg_to_rad(self) -> Self {
         self * core::f32::consts::TAU / ONE_TURN_DEGREES_F32
     }
+
+    /// # Examples
+    /// ```
+    /// # use nannou_core::prelude::*;
+    /// # use nannou_core::math::ConvertAngle;
+    /// assert_eq!((core::f32::consts::PI / 2.0).rad_to_deg(), 90_f32);
+    /// assert_eq!((-(core::f32::consts::PI / 2.0)).rad_to_deg(), -90_f32);
+    /// assert_eq!(core::f32::consts::PI.rad_to_deg(), 180_f32);
+    /// assert_eq!(-(core::f32::consts::PI).rad_to_deg(), -180_f32);
+    /// assert_eq!((core::f32::consts::TAU).rad_to_deg(), 360_f32);
+    /// ```
     fn rad_to_deg(self) -> Self {
         self * ONE_TURN_DEGREES_F32 / core::f32::consts::TAU
     }
+
+    /// # Examples
+    /// ```
+    /// # use nannou_core::prelude::*;
+    /// # use nannou_core::math::ConvertAngle;
+    ///
+    /// assert_eq!(0.5_f32.turns_to_rad(), core::f32::consts::PI);
+    /// assert_eq!(1.0_f32.turns_to_rad(), core::f32::consts::TAU);
+    /// assert_eq!(2.0_f32.turns_to_rad(), 2.0 * core::f32::consts::TAU);
+    /// assert_eq!(-2.0_f32.turns_to_rad(), -2.0 * core::f32::consts::TAU);
+    /// ```
     fn turns_to_rad(self) -> Self {
         self * core::f32::consts::TAU
     }
+
+    /// # Examples
+    /// ```
+    /// # use nannou_core::prelude::*;
+    /// # use nannou_core::math::ConvertAngle;
+    /// assert_eq!(core::f32::consts::PI.rad_to_turns(), 0.5_f32);
+    /// assert_eq!(core::f32::consts::TAU.rad_to_turns(), 1_f32);
+    /// assert_eq!((2.0 * core::f32::consts::TAU).rad_to_turns(), 2_f32);
+    /// assert_eq!((-2.0 * core::f32::consts::TAU).rad_to_turns(), -2_f32);
+    /// ```
     fn rad_to_turns(self) -> Self {
         self / core::f32::consts::TAU
     }
@@ -84,6 +126,14 @@ impl ConvertAngle for f64 {
 }
 
 impl Vec2Angle for glam::Vec2 {
+    /// # Examples
+    /// ```
+    /// # use nannou_core::prelude::*;
+    /// # use glam::Vec2;
+    /// assert_eq!(Vec2::new(15.0, 5.0).angle(), 0.3217505_f32);
+    /// assert_eq!(Vec2::new(200.0, 400.0).angle(), 1.1071486_f32);
+    /// assert_eq!(Vec2::new(-10.0, 40.0).angle(), 1.815775_f32);
+    /// ```
     fn angle(self) -> f32 {
         glam::Vec2::X.angle_between(self)
     }
@@ -148,6 +198,13 @@ where
 }
 
 /// The max between two partially ordered values.
+/// # Examples
+/// ```
+/// # use nannou_core::prelude::*;
+/// assert_eq!(partial_max(5, 10), 10);
+/// assert_eq!(partial_max(5, 5), 5);
+/// assert_eq!(partial_max(5, 0), 5);
+/// ```
 pub fn partial_max<T>(a: T, b: T) -> T
 where
     T: PartialOrd,
@@ -160,6 +217,13 @@ where
 }
 
 /// The min between two partially ordered values.
+/// # Examples
+/// ```
+/// # use nannou_core::prelude::*;
+/// assert_eq!(partial_min(5, 10), 5);
+/// assert_eq!(partial_min(5, 5), 5);
+/// assert_eq!(partial_min(5, 0), 0);
+/// ```
 pub fn partial_min<T>(a: T, b: T) -> T
 where
     T: PartialOrd,
@@ -172,6 +236,18 @@ where
 }
 
 /// Clamp a value between some range.
+/// # Examples
+/// ```
+/// # use nannou_core::prelude::*;
+/// assert_eq!(clamp(-5, 0, 10), 0);
+/// assert_eq!(clamp(15, 0, 10), 10);
+/// assert_eq!(clamp(5, 0, 10), 5);
+///
+/// // Range start and end don't have to strictly be ordered
+/// assert_eq!(clamp(-5, 10, 0), 0);
+/// assert_eq!(clamp(15, 10, 0), 10);
+/// assert_eq!(clamp(5, 10, 0), 5);
+/// ```
 pub fn clamp<T>(n: T, start: T, end: T) -> T
 where
     T: PartialOrd,
@@ -195,6 +271,22 @@ where
     }
 }
 
+/// # Examples
+/// ```
+/// # use nannou_core::math::two;
+/// assert_eq!(two::<u32>(), 2u32);
+/// assert_eq!(two::<u64>(), 2u64);
+///
+/// assert_eq!(two::<i32>(), 2i32);
+/// assert_eq!(two::<i64>(), 2i64);
+///
+/// assert_eq!(two::<f32>(), 2f32);
+/// assert_eq!(two::<f64>(), 2f64);
+///
+/// // Alternatively:
+/// let float_test: f64 = two();
+/// assert_eq!(float_test, 2f64);
+/// ```
 pub fn two<S>() -> S
 where
     S: Add<Output = S> + One,
@@ -203,6 +295,26 @@ where
 }
 
 /// Models the C++ fmod function.
+/// # Examples
+/// ```
+/// # use nannou_core::prelude::*;
+/// fn is_close_to<F>(f1: F, f2: F, delta: F) -> bool
+///     where F: Float
+/// {
+///     f1 - f2 < delta && f2 - f1 < delta
+/// }
+/// let tolerance = 0.01;
+///
+/// assert!(is_close_to(fmod(5.1, 3.0), 2.1, tolerance));
+/// assert!(is_close_to(fmod(-5.1, 3.0), 2.1, tolerance)); // should be -2.1
+/// assert!(is_close_to(fmod(5.1, -3.0), -2.1, tolerance)); // should be 2.1
+/// assert!(is_close_to(fmod(-5.1, -3.0), -2.1, tolerance));
+///
+/// assert_eq!(fmod(0.0, 1.0), 0.0);
+/// assert_eq!(fmod(-0.0, 1.0), -0.0);
+/// assert!(fmod(5.1, f32::INFINITY).is_sign_negative());
+/// assert!(fmod(5.1, f32::INFINITY).is_nan());
+/// ```
 #[inline]
 pub fn fmod<F>(numer: F, denom: F) -> F
 where
